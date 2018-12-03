@@ -30,11 +30,15 @@ def exception_example():
         i = 1
 
         while True:
+
+            # 결과값 초기화 : 명령어가 제대로 수행됬는지를 식별하기 위해 사용
+            result = None
+
             # 파일에서 한 줄 읽는다.
             line = file.readline()
 
+            # 더 이상 읽을 내용이 없는 경우
             if not line:
-                # 더 이상 읽을 내용이 없는 경우
                 # while문 벗어남(읽기 종료)
                 break
             else:
@@ -44,19 +48,30 @@ def exception_example():
             try:
                 # 읽어들인 한 줄이 공백인 경우
                 if line == "":
-                    # 공백 에러 발생
+                    # 공백 예외 발생
                     raise EmptyLineError()
 
                 # " "로 쪼갠다
+                # tokens[0] = 명령어
+                # tokens[1] = 첫번째 피연산자
+                # tokens[2] = 두번째 피연산자
                 tokens = line.split(" ")
                 if len(tokens) != 3:
+                    # 입력개수가 3개가 아니라면(피연산자는 2개, 명령어 포함 3개)
+                    # 입력 개수 예외 발생
                     raise InputCountError()
 
+                # string인 tokens[1], tokens[2]를 int형으로 바꾼다.
                 a = int(tokens[1])
                 b = int(tokens[2])
+
+                # 피연산자 중 하나라도 음수이면
                 if a < 0 or b < 0:
+                    # 음수 입력 예외 발생
                     raise NegativeInputError()
 
+                # tokens[0](명령어)를 분석한다.
+                # 결과값은 result에 저장되며
                 if tokens[0] == "ADD":
                     # 더하기 명령어
                     result = a + b
@@ -73,6 +88,7 @@ def exception_example():
                     # 정의되어 있지 않은 명령어 에러 발생
                     raise UnKnownOpcodeError()
 
+            # 예외처리
             except NegativeInputError as e:
                 # 입력이 음수 일 때
                 print('{}: 데이터에 음수가 있습니다.'.format(i))
@@ -105,16 +121,22 @@ def exception_example():
 
         file.close()
     except FileNotFoundError as e:
+        # 파일이 없는 경우
+        # (기본으로 제공되는 예외)
         print("파일을 열 수 없습니다")
+        # 프로그램 종료
         exit()
-    except PermissionError as e:
+    except IOError as e:
+        # 입출력 오류 ( 파일이 열려있는 지 확인 할 수 없기 때문에 입출력 에러로 대체 )
+        # (기본으로 제공되는 예외)
         print("파일이 열려 있습니다.")
+        # 프로그램 종료
         exit()
 
-
+# main 함수 (이 프로그램의 시작 함수)
 def main():
     exception_example()
 
-
+# 처음 실행될 때 main함수 호출
 if __name__ == "__main__":
     main()
